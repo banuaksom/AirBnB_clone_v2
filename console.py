@@ -48,7 +48,7 @@ class HBNBCommand(cmd.Cmd):
                 key = new_list[0]
                 value = new_list[1]
                 if value[0] == '"' and value[-1] == '"':
-                    value = value[1:-1].replace('_', ' ').replace('"', '\\"')
+                    value = value[1:-1].replace('_', ' ')
                 elif value.isdigit():
                     value = int(value)
                 else:
