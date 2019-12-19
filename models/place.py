@@ -1,8 +1,22 @@
 #!/usr/bin/python3
 """This is the place class"""
 from models.base_model import BaseModel, Base
-from sqlalchemy import Column, String, Integer, Float, ForeignKey
+from sqlalchemy import Column, String, Integer, Float, ForeignKey, Table
 from sqlalchemy.orm import relationship
+
+
+place_amenity = Table('place_amenity', Base.metadata,
+                      Column('place_id',
+                             String(60),
+                             ForeignKey('place.id'),
+                             primary_key=True,
+                             nullable=False),
+                      Column('amenity_id',
+                             String(60),
+                             ForeignKey('amenities.id'),
+                             primary_key=True,
+                             nullable=False
+                             ))
 
 
 class Place(BaseModel, Base):
@@ -34,6 +48,11 @@ class Place(BaseModel, Base):
     amenity_ids = []
     reviews = relationship('Review', backref='place',
                            cascade='all, delete-orphan')
+    amenities = relationship('Amenity', backref='place',
+                             cascade='all, delete-orphan',
+                             secondary='place_amenity',
+                             viewonly=False)
+
     @property
     def reviews(self):
         """Return list of Review instances with place_id equal to current
@@ -44,3 +63,10 @@ class Place(BaseModel, Base):
             if self.id == review.place_id:
                 reviews.append(review)
         return reviews
+
+"""
+for FileStorage:
+Getter attribute amenities that returns the list of Amenity instances based on the attribute amenity_ids that contains all Amenity.id linked to the Place
+
+Setter attribute amenities that handles append method for adding an Amenity.id to the attribute amenity_ids. This method should accept only Amenity object, otherwise, do nothing.
+"""
