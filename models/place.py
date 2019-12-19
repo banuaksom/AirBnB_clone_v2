@@ -32,3 +32,15 @@ class Place(BaseModel, Base):
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
     amenity_ids = []
+    reviews = relationship('Review', backref='place',
+                           cascade='all, delete-orphan')
+    @property
+    def reviews(self):
+        """Return list of Review instances with place_id equal to current
+        Place.id
+        """
+        reviews = []
+        for review in models.storage.all(Review).values:
+            if self.id == review.place_id:
+                reviews.append(review)
+        return reviews
