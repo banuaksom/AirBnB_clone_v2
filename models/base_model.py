@@ -3,7 +3,7 @@
 import uuid
 import models
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 
 
@@ -67,7 +67,6 @@ class BaseModel:
         my_dict["__class__"] = str(type(self).__name__)
         my_dict["created_at"] = self.created_at.isoformat()
         my_dict["updated_at"] = self.updated_at.isoformat()
-        # remove the key _sa_instance_state from the dictionary returned by this method only if this key exists
         my_dict.pop('_sa_instance_state', None)
         return my_dict
 
