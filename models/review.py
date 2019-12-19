@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 """This is the review class"""
-from models.base_model import BaseModel
+from models.base_model import BaseModel, Base
+from sqlaclchemy import Column, String
+from sqlalchemy.orm import relationship
 
 
 class Review(BaseModel):
@@ -10,6 +12,7 @@ class Review(BaseModel):
         user_id: user id
         text: review description
     """
-    place_id = ""
-    user_id = ""
-    text = ""
+    __tablename__ = 'reviews'
+    place_id = Column(String(60), nullable=False, ForeignKey='places.id')
+    user_id = Column(String(60), nullable=False, ForeignKey='users.id')
+    text = Column(String(1024), nullable=False)
