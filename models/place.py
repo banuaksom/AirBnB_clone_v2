@@ -3,20 +3,8 @@
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, Integer, Float, ForeignKey, Table
 from sqlalchemy.orm import relationship
+from os import getenv
 
-
-place_amenity = Table('place_amenity', Base.metadata,
-                      Column('place_id',
-                             String(60),
-                             ForeignKey('places.id'),
-                             primary_key=True,
-                             nullable=False),
-                      Column('amenity_id',
-                             String(60),
-                             ForeignKey('amenities.id'),
-                             primary_key=True,
-                             nullable=False
-                             ))
 
 class Place(BaseModel, Base):
     """This is the class for Place
@@ -45,39 +33,52 @@ class Place(BaseModel, Base):
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
     amenity_ids = []
-    reviews = relationship('Review', backref='place',
-                           cascade='all, delete-orphan')
-    amenities = relationship('Amenity',
-                             secondary='place_amenity',
-                             backref='place',
-                             viewonly=False)
+    place_amenity = Table('place_amenity', Base.metadata,
+                          Column('place_id',
+                                 String(60),
+                                 ForeignKey('places.id'),
+                                 primary_key=True,
+                                 nullable=False),
+                          Column('amenity_id',
+                                 String(60),
+                                 ForeignKey('amenities.id'),
+                                 primary_key=True,
+                                 nullable=False
+                                 ))
+    if getenv('HBNB_TYPE_STORAGE') == 'db':
+        reviews = relationship('Review', backref='place',
+                               cascade='all, delete-orphan')
+        amenities = relationship('Amenity',
+                                 secondary='place_amenity',
+                                 backref='place',
+                                 viewonly=False)
+    else:
+        @property
+        def reviews(self):
+            """Return list of Review instances with place_id equal to current
+            Place.id
+            """
+            reviews = []
+            for review in models.storage.all(Review).values:
+                if self.id == review.place_id:
+                    reviews.append(review)
+                    return reviews
 
-    @property
-    def reviews(self):
-        """Return list of Review instances with place_id equal to current
-        Place.id
-        """
-        reviews = []
-        for review in models.storage.all(Review).values:
-            if self.id == review.place_id:
-                reviews.append(review)
-        return reviews
+        @property
+        def amenities(self):
+            """Returns the list of Amenity instances based on the
+            attribute amenity_ids
+            """
+            amenities = []
+            for amenity in models.storage.all(Amenity).values:
+                if self.id == amenity.place_id:
+                    amenities.append(amenity)
+            return amenities
 
-    @property
-    def amenities(self):
-        """Returns the list of Amenity instances based on the
-        attribute amenity_ids
-        """
-        amenities = []
-        for amenity in models.storage.all(Amenity).values:
-            if self.id == amenity.place_id:
-                amenities.append(amenity)
-        return amenities
-
-    @amenities.setter
-    def amenities(self, obj):
-        """setter that appends Amenity.id to the
-        attribute amenity_ids
-        """
-        if type(obj) == 'Amenity':
-            self.amenity_ids.append(obj.id)
+        @amenities.setter
+        def amenities(self, obj):
+            """setter that appends Amenity.id to the
+            attribute amenity_ids
+            """
+            if type(obj) == 'Amenity':
+                self.amenity_ids.append(obj.id)
