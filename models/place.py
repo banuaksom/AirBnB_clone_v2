@@ -4,7 +4,7 @@ from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, Integer, Float, ForeignKey, Table
 from sqlalchemy.orm import relationship
 
-"""
+
 place_amenity = Table('place_amenity', Base.metadata,
                       Column('place_id',
                              String(60),
@@ -17,7 +17,6 @@ place_amenity = Table('place_amenity', Base.metadata,
                              primary_key=True,
                              nullable=False
                              ))
-"""
 
 class Place(BaseModel, Base):
     """This is the class for Place
@@ -48,9 +47,9 @@ class Place(BaseModel, Base):
     amenity_ids = []
     reviews = relationship('Review', backref='place',
                            cascade='all, delete-orphan')
-    amenities = relationship('Amenity', backref='place',
-                             cascade='all, delete-orphan',
+    amenities = relationship('Amenity',
                              secondary='place_amenity',
+                             backref='place',
                              viewonly=False)
 
     @property
@@ -64,9 +63,21 @@ class Place(BaseModel, Base):
                 reviews.append(review)
         return reviews
 
-"""
-for FileStorage:
-Getter attribute amenities that returns the list of Amenity instances based on the attribute amenity_ids that contains all Amenity.id linked to the Place
+    @property
+    def amenities(self):
+        """Returns the list of Amenity instances based on the
+        attribute amenity_ids
+        """
+        amenities = []
+        for amenity in models.storage.all(Amenity).values:
+            if self.id == amenity.place_id:
+                amenities.append(amenity)
+        return amenities
 
-Setter attribute amenities that handles append method for adding an Amenity.id to the attribute amenity_ids. This method should accept only Amenity object, otherwise, do nothing.
-"""
+    @amenities.setter
+    def amenities(self, obj):
+        """setter that appends Amenity.id to the
+        attribute amenity_ids
+        """
+        if type(obj) == 'Amenity':
+            self.amenity_ids.append(obj.id)
