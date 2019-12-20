@@ -74,7 +74,7 @@ class TestFileStorage(unittest.TestCase):
             lines = f.readlines()
         try:
             os.remove(path)
-        except:
+        except Exception:
             pass
         self.storage.save()
         with open(path, 'r') as f:
@@ -82,7 +82,7 @@ class TestFileStorage(unittest.TestCase):
         self.assertEqual(lines, lines2)
         try:
             os.remove(path)
-        except:
+        except Exception:
             pass
         with open(path, "w") as f:
             f.write("{}")
@@ -90,6 +90,18 @@ class TestFileStorage(unittest.TestCase):
             for line in r:
                 self.assertEqual(line, "{}")
         self.assertIs(self.storage.reload(), None)
+
+    def test_delete(self):
+        """Test delete method"""
+        pass
+
+    def test_delete_with_args(self):
+        """Test delete method with arguments"""
+        pass
+
+    def test_all_with_args(self):
+        """Test all method with optional arguments"""
+        pass
 
 
 if __name__ == "__main__":

@@ -8,6 +8,8 @@ import os
 import json
 import console
 import tests
+import re
+import MySQLdb
 from console import HBNBCommand
 from models.base_model import BaseModel
 from models.user import User
@@ -17,15 +19,17 @@ from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
 from models.engine.file_storage import FileStorage
+from models import storage
 
 
 class TestConsole(unittest.TestCase):
     """this will test the console"""
 
     @classmethod
-    def setUpClass(cls):
+    def setUp(cls):
         """setup for the test"""
         cls.consol = HBNBCommand()
+        storage.reset()
 
     @classmethod
     def teardown(cls):
@@ -83,11 +87,11 @@ class TestConsole(unittest.TestCase):
             self.assertEqual(
                 "** class doesn't exist **\n", f.getvalue())
         with patch('sys.stdout', new=StringIO()) as f:
-            self.consol.onecmd("create User")
+            self.consol.onecmd('create State name="California"')
         with patch('sys.stdout', new=StringIO()) as f:
-            self.consol.onecmd("all User")
+            self.consol.onecmd("all State")
             self.assertEqual(
-                "[[User]", f.getvalue()[:7])
+                "[[State]", f.getvalue()[:8])
 
     def test_show(self):
         """Test show command inpout"""
@@ -216,21 +220,19 @@ class TestConsole(unittest.TestCase):
             self.assertEqual(
                 "** class doesn't exist **\n", f.getvalue())
         with patch('sys.stdout', new=StringIO()) as f:
-            self.consol.onecmd("User.update(12345)")
+            self.consol.onecmd("State.update(12345)")
             self.assertEqual(
                 "** no instance found **\n", f.getvalue())
         with patch('sys.stdout', new=StringIO()) as f:
+            self.consol.onecmd('create State name="Utah"')
             self.consol.onecmd("all User")
             obj = f.getvalue()
         my_id = obj[obj.find('(')+1:obj.find(')')]
         with patch('sys.stdout', new=StringIO()) as f:
-            self.consol.onecmd("User.update(" + my_id + ")")
-            self.assertEqual(
-                "** attribute name missing **\n", f.getvalue())
-        with patch('sys.stdout', new=StringIO()) as f:
-            self.consol.onecmd("User.update(" + my_id + ", name)")
+            self.consol.onecmd("State.update(" + my_id + ")")
             self.assertEqual(
                 "** value missing **\n", f.getvalue())
-
-if __name__ == "__main__":
-    unittest.main()
+        with patch('sys.stdout', new=StringIO()) as f:
+            self.consol.onecmd("State.update(" + my_id + ", name)")
+            self.assertEqual(
+                "", f.getvalue())
