@@ -1,11 +1,11 @@
-#!/usr/bin/python3
+#!/usr/bin/python3.5
 from datetime import datetime
 from os.path import isfile
 from fabric.api import *
 
 
 env.hosts = ['35.196.198.147', '35.229.66.46']
-env.user = 'ubuntu'
+# env.user = 'ubuntu'
 
 
 def do_pack():
@@ -19,7 +19,7 @@ def do_pack():
 
 def do_deploy(archive_path):
     """ distributes an archive to your web servers """
-    if isfile(archive_path) is False:
+    if not isfile(archive_path):
         return False
     a_file = archive_path.split('/')[1]
     b_file = archive_path.split('/')[1].split('.')[0]
