@@ -16,6 +16,7 @@ def do_pack():
     if isfile("versions/web_static_{}.tgz".format(cur_time)):
         return "versions/web_static_{}.tgz".format(cur_time)
 
+
 def do_deploy(archive_path):
     """ distributes an archive to your web servers """
     if isfile(archive_path) is False:
@@ -39,6 +40,7 @@ def do_deploy(archive_path):
         return True
     except Exception:
         return False
+
 
 def deploy():
     """ creates and distributes an archive to your web servers """
