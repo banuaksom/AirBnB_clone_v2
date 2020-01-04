@@ -6,12 +6,13 @@ from fabric.api import *
 env.hosts = ['35.196.198.147', '35.229.66.46']
 env.user = 'ubuntu'
 
+
 def do_deploy(archive_path):
     """ distributes an archive to your web servers """
     if isfile(archive_path) is False:
         return False
     a_file = archive_path.split('/')[1]
-    b_file = a_file.split('.')[0]
+    b_file = archive_path.split('/')[1].split('.')[0]
     try:
         put(archive_path, '/tmp/')
         run("mkdir -p /data/web_static/releases/{}/".format(b_file))
