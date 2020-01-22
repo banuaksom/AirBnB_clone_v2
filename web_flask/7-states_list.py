@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" Starts a Flask web application """
+""" starts Flask web application """
 from flask import Flask, render_template
 from models import storage
 from models.state import State
@@ -21,4 +21,4 @@ def storage_close(var=None):
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', port=5000)
