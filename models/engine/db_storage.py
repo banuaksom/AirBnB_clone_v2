@@ -2,7 +2,7 @@
 """This is the db storage class for AirBnB"""
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
-from os import getenv
+from os import getenv, environ
 from models.base_model import BaseModel, Base
 from models.user import User
 from models.state import State
@@ -27,7 +27,7 @@ class DBStorage:
                 getenv('HBNB_MYSQL_HOST'),
                 getenv('HBNB_MYSQL_DB')
             ), pool_pre_ping=True)
-        if getenv('HBNB_ENV') == 'test':
+        if environ.get('HBNB_ENV') is not None and getenv('HBNB_ENV') == 'test':
             Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
