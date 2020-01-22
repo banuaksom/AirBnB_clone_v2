@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 """ Starts a Flask web application """
 from flask import Flask, render_template
-from models import storage, State
+from models import storage
+from models.state import State
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 
@@ -15,7 +16,7 @@ def state_list():
 
 @app.teardown_appcontext
 def storage_close(var=None):
-    """Removes running session"""
+    """closes running session"""
     storage.close()
 
 
