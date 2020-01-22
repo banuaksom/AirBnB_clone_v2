@@ -27,8 +27,9 @@ class DBStorage:
                 getenv('HBNB_MYSQL_HOST'),
                 getenv('HBNB_MYSQL_DB')
             ), pool_pre_ping=True)
-        if environ.get('HBNB_ENV') is not None and getenv('HBNB_ENV') == 'test':
-            Base.metadata.drop_all(self.__engine)
+        if environ.get('HBNB_ENV'):
+            if getenv('HBNB_ENV') == 'test':
+                Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
         """returns a dictionary
