@@ -8,7 +8,10 @@ app = Flask(__name__)
 
 @app.route("/states_list", strict_slashes=False)
 def state_list():
-    """ Displays HTML page """
+    """ Displays HTML page
+        H1 tag: “States”
+        UL tag: list of all State objects
+    """
     return render_template("7-states_list.html",
                            data=storage.all(State).values())
 
