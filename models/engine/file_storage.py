@@ -25,12 +25,6 @@ class FileStorage:
         Return:
             the list of objects of one type of class
         """
-        if cls:
-            dicti = {}
-            for key, value in self.__objects.items():
-                if key.startswith(str(cls.__name__)):
-                    dicti[key] = value
-            return dicti
         return self.__objects
 
     def new(self, obj):
